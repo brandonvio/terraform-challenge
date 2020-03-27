@@ -83,7 +83,8 @@ resource "aws_iam_role_policy" "dynamodb-lambda-policy" {
     {
       "Effect": "Allow",
       "Action": [
-        "dynamodb:*"
+        "dynamodb:GetItem",
+        "dynamodb:Scan"
       ],
       "Resource": "${aws_dynamodb_table.project-dynamodb-table.arn}"
     },
