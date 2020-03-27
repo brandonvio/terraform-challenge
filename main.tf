@@ -44,8 +44,11 @@ resource "aws_dynamodb_table" "project-dynamodb-table" {
     projection_type    = "INCLUDE"
     non_key_attributes = ["ProjectId"]
   }
-}
 
+  tags = {
+    Name = "project-dynamodb-table"
+  }
+}
 
 #############################################################
 # IAM for the Lambda function.
@@ -84,7 +87,8 @@ resource "aws_iam_role_policy" "dynamodb-lambda-policy" {
       "Effect": "Allow",
       "Action": [
         "dynamodb:GetItem",
-        "dynamodb:Scan"
+        "dynamodb:Scan",
+        "dynamodb:PutItem"
       ],
       "Resource": "${aws_dynamodb_table.project-dynamodb-table.arn}"
     },
@@ -118,6 +122,10 @@ resource "aws_lambda_function" "get-project-function" {
   source_code_hash = filebase64sha256("function.zip")
   runtime          = "nodejs12.x"
   publish          = true
+
+  tags = {
+    Name = "get-project-function"
+  }
 }
 
 resource "aws_lambda_function" "get-project-list-function" {
@@ -128,6 +136,10 @@ resource "aws_lambda_function" "get-project-list-function" {
   source_code_hash = filebase64sha256("function.zip")
   runtime          = "nodejs12.x"
   publish          = true
+
+  tags = {
+    Name = "get-project-list-function"
+  }
 }
 
 
