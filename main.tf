@@ -122,6 +122,7 @@ resource "aws_lambda_function" "get-project-function" {
   source_code_hash = filebase64sha256("function.zip")
   runtime          = "nodejs12.x"
   publish          = true
+  depends_on       = [aws_cloudwatch_log_group.get-project-log-group]
 
   tags = {
     Name = "get-project-function"
@@ -136,12 +137,53 @@ resource "aws_lambda_function" "get-project-list-function" {
   source_code_hash = filebase64sha256("function.zip")
   runtime          = "nodejs12.x"
   publish          = true
+  depends_on       = [aws_cloudwatch_log_group.get-project-list-log-group]
 
   tags = {
     Name = "get-project-list-function"
   }
 }
 
+#############################################################
+# Cloudwatch.
+#############################################################
+resource "aws_cloudwatch_log_group" "get-project-log-group" {
+  name              = "/aws/lambda/getProject"
+  retention_in_days = 30
+}
+
+resource "aws_cloudwatch_log_group" "get-project-list-log-group" {
+  name              = "/aws/lambda/getProjectList"
+  retention_in_days = 30
+}
+
+# resource "aws_iam_policy" "lambda-logging" {
+#   name        = "lambda_logging"
+#   path        = "/"
+#   description = "IAM policy for logging from a lambda"
+
+#   policy = <<EOF
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Action": [
+#         "logs:CreateLogGroup",
+#         "logs:CreateLogStream",
+#         "logs:PutLogEvents"
+#       ],
+#       "Resource": "arn:aws:logs:*:*:*",
+#       "Effect": "Allow"
+#     }
+#   ]
+# }
+# EOF
+# }
+
+# resource "aws_iam_role_policy_attachment" "lambda-logs" {
+#   role       = aws_iam_role.iam_for_lambda.name
+#   policy_arn = aws_iam_policy.lambda-logging.arn
+# }
 
 #############################################################
 # API Gateway.
